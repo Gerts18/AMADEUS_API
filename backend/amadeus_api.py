@@ -1,7 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv
-from amadeus import Client, ResponseError
+from amadeus import Client, ResponseError, Location
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ def get_flights():
     
     try:
         search_flights = amadeus.shopping.flight_offers_search.get(**parameters)
-        #print(json.dumps(search_flights.data[:1], indent= 4))
+        #print(json.dumps(search_flights.data[:3], indent= 4))
         
         for flight in search_flights.data:
             filtered_flights.append(parse_flight(flight))
@@ -35,7 +35,7 @@ def get_flights():
     except ResponseError as error:
         return (error.response.body)
     
-    return filtered_flights
+    return json.dumps(filtered_flights, indent=4)
 
 def parse_flight(flight_data):
     flight = {}
@@ -79,5 +79,30 @@ def parse_flight(flight_data):
         
     return flight
 
+def get_locations():
+    
+    try:
+        locations = amadeus.reference_data.locations.get(
+            keyword = 'r',
+            subType = Location.ANY
+        )
+        
+        locations_list = parse_locations(locations.data)
+        
+    except ResponseError as error:
+        return (error.response.body)
+
+    return json.dumps(locations_list, indent= 4)
+
+def parse_locations(locations_data):
+    locations = []
+    
+    for location in locations_data:
+        formatted_location = f"{location['iataCode']}, {location['name']}"
+        locations.append(formatted_location)
+
+    return locations # Check how to delete repeated codes 
+    
+
 if __name__ == "__main__":
-  print(json.dumps(get_flights(), indent = 4))
+  print(get_locations())
