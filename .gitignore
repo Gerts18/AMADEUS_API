@@ -2,3 +2,4 @@ venv
 .env
 *.txt
 *.json
+__pycache__

@@ -2,6 +2,9 @@ import os
 import json
 from dotenv import load_dotenv
 from amadeus import Client, ResponseError, Location
+"""
+This script is the one that handles all the requests to the Amadeus API and its logic.
+"""
 
 load_dotenv()
 
@@ -10,12 +13,8 @@ amadeus = Client(
     client_secret=os.getenv('AMADEUS_CLIENT_SECRET'),
 )
 
-
-def get_flights():
-    origin = "SYD"
-    destination = "BKK"
-    departure_date = '2025-12-20'
-    
+# Retrieve flights based on parameters send by the user
+def get_flights(origin = "SYD", destination= "BKK", departure_date = '2025-12-20'):
     filtered_flights = []
     
     parameters = {
@@ -37,6 +36,7 @@ def get_flights():
     
     return json.dumps(filtered_flights, indent=4)
 
+# Parse the data of a flight
 def parse_flight(flight_data):
     flight = {}
     index = 0
@@ -79,11 +79,12 @@ def parse_flight(flight_data):
         
     return flight
 
-def get_locations():
+# Retrieve locations availables for flights  
+def get_locations(keyword = 'r'):
     
     try:
         locations = amadeus.reference_data.locations.get(
-            keyword = 'r',
+            keyword = keyword,
             subType = Location.ANY
         )
         
@@ -94,6 +95,7 @@ def get_locations():
 
     return json.dumps(locations_list, indent= 4)
 
+# Parses the data from an array of locations
 def parse_locations(locations_data):
     locations = []
     
