@@ -3,8 +3,8 @@ from amadeus_api import get_flights, get_locations
 
 app = Flask(__name__)
 
-@app.route("/locations", methods=['GET'])
-def locations():
+@app.route("/flights", methods=['GET'])
+def flights():
     try: 
         origin = request.args.get('origin', '')
         destination = request.args.get('destination', '')
@@ -19,6 +19,10 @@ def locations():
     
     except KeyError as error: 
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 200
+    
+@app.route("/locations")
+def locations():
+    pass
 
 if __name__ == "__main__":
     app.run(debug=True)
