@@ -22,7 +22,18 @@ def flights():
     
 @app.route("/locations")
 def locations():
-    pass
+    try:
+        keyword = request.args.get('keyword', '')
+        
+        if keyword == '':
+            return jsonify({"Error": f"Not all parameters provided"}), 200
+        
+        locations = get_locations(keyword=keyword)
+        
+        return locations
+        
+    except KeyError as error: 
+        return jsonify({"Error": f"Something went wrong with your request: {error}"}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
