@@ -99,13 +99,13 @@ def get_locations(keyword = 'r'):
 
 # Parses the data from an array of locations
 def parse_locations(locations_data):
-    locations = []
+    locations_dict = {}
     
     for location in locations_data:
-        formatted_location = {location['iataCode']: location['name']}
-        locations.append(formatted_location)
-
-    return locations # Check how to delete repeated codes 
+        iata_code = location['iataCode']
+        locations_dict[iata_code] = location['name']
+    
+    return locations_dict 
     
 
 if __name__ == "__main__":
