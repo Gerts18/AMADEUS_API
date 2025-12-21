@@ -1,3 +1,4 @@
 amadeus
 python-dotenv
 Flask
+flask-cors

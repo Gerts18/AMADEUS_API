@@ -100,7 +100,7 @@ def parse_locations(locations_data):
     locations = []
     
     for location in locations_data:
-        formatted_location = f"{location['iataCode']}, {location['name']}"
+        formatted_location = {location['iataCode']: location['name']}
         locations.append(formatted_location)
 
     return locations # Check how to delete repeated codes 
