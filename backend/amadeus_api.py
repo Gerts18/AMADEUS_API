@@ -30,11 +30,12 @@ def get_flights(origin = "SYD", destination= "BKK", departure_date = '2025-12-20
         
         for flight in search_flights.data:
             filtered_flights.append(parse_flight(flight))
+            
+        return filtered_flights
         
     except ResponseError as error:
         return (error.response.body)
-    
-    return json.dumps(filtered_flights, indent=4)
+
 
 # Parse the data of a flight
 def parse_flight(flight_data):
@@ -81,6 +82,7 @@ def parse_flight(flight_data):
 
 # Retrieve locations availables for flights  
 def get_locations(keyword = 'r'):
+    location_list = []
     
     try:
         locations = amadeus.reference_data.locations.get(
@@ -90,10 +92,10 @@ def get_locations(keyword = 'r'):
         
         locations_list = parse_locations(locations.data)
         
+        return locations_list
+        
     except ResponseError as error:
         return (error.response.body)
-
-    return json.dumps(locations_list, indent= 4)
 
 # Parses the data from an array of locations
 def parse_locations(locations_data):
