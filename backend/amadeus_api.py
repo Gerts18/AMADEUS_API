@@ -2,6 +2,7 @@ import os
 import json
 from dotenv import load_dotenv
 from amadeus import Client, ResponseError, Location
+import asyncio
 """
 This script is the one that handles all the requests to the Amadeus API and its logic.
 """
@@ -14,7 +15,7 @@ amadeus = Client(
 )
 
 # Retrieve flights based on parameters send by the user
-def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str = '2025-12-23') -> []:
+async def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str = '2025-12-23') -> list[dict]:
     filtered_flights:list = []
     
     parameters = {
@@ -25,8 +26,13 @@ def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str 
     }
     
     try:
-        search_flights = amadeus.shopping.flight_offers_search.get(**parameters)
+        search_flights = await asyncio.to_thread(
+            amadeus.shopping.flight_offers_search.get, 
+            **parameters
+        )
+        
         #print(json.dumps(search_flights.data[:3], indent= 4))
+        
         """ with open('flights_data.json', 'w', encoding='utf-8') as f:
             json.dump(search_flights.data, f, indent=4, ensure_ascii=False) """
         
@@ -39,9 +45,8 @@ def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str 
         data_error = json.loads(error.response.body) if isinstance(error.response.body, str) else error.response.body
         return {"title": data_error["errors"][0]["title"],"details": data_error["errors"][0]["detail"]}
 
-
 # Parse the data of a flight
-def parse_flight(flight_data: dict) -> {}:
+def parse_flight(flight_data: dict) -> dict:
     flight: dict = {}
     
     flight['price'] = flight_data['price']['total']
@@ -66,13 +71,14 @@ def parse_flight(flight_data: dict) -> {}:
     return flight
 
 # Retrieve locations availables for flights  
-def get_locations(keyword: str = 'r') -> {}:
+async def get_locations(keyword: str = 'r') -> dict:
     location_list: list = []
     
     try:
-        locations = amadeus.reference_data.locations.get(
-            keyword = keyword,
-            subType = Location.ANY
+        locations = await asyncio.to_thread(
+                amadeus.reference_data.locations.get,
+                keyword = keyword,
+                subType = Location.ANY
         )
         
         locations_list = parse_locations(locations.data)
@@ -84,15 +90,15 @@ def get_locations(keyword: str = 'r') -> {}:
         return {"title": data_error["errors"][0]["title"],"details": data_error["errors"][0]["detail"]}
 
 # Parses the data from an array of locations
-def parse_locations(locations_data: list) -> {}:
+def parse_locations(locations_data: list) -> dict:
     locations_dict: dict = {}
     
     for location in locations_data:
         iata_code = location['iataCode']
-        locations_dict[iata_code] = location['name']
+        locations_dict[iata_code] = location['name']  
     
     return locations_dict 
     
 
 if __name__ == "__main__":
-  print(get_locations())
+  print(asyncio.run(get_locations()))

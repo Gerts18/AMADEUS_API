@@ -1,4 +1,4 @@
 amadeus
 python-dotenv
-Flask
-flask-cors
+quart
+quart-cors

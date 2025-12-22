@@ -1,12 +1,18 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from quart import Quart, request, jsonify
+from quart_cors import cors
 from amadeus_api import get_flights, get_locations
+"""
+This script sets up a Quart web server with two endpoints: /flights and /locations.
+The /flights endpoint retrieves flight information based on origin, destination, and departure date parameters.
+The /locations endpoint retrieves available flight locations based on a keyword parameter.
+"""
 
-app = Flask(__name__)
-CORS(app)
+app = Quart(__name__)
+app = cors(app,  allow_origin="*") #http://localhost:3000
+
 
 @app.route("/flights", methods=['GET'])
-def flights() -> []:
+async def flights() -> list:
     try: 
         origin: str = request.args.get('origin', '')
         destination: str = request.args.get('destination', '')
@@ -15,7 +21,7 @@ def flights() -> []:
         if origin == '' or destination == '' or departure_date == '':
             return jsonify({"Error": f"Not all parameters provided"}), 400
         
-        flights = get_flights(origin=origin, destination=destination, departure_date=departure_date )
+        flights = await get_flights(origin=origin, destination=destination, departure_date=departure_date )
         
         return jsonify(flights)
     
@@ -23,14 +29,14 @@ def flights() -> []:
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 500
     
 @app.route("/locations", methods=['GET'])
-def locations() -> {}:
+async def locations() -> dict:
     try:
         keyword: str = request.args.get('keyword', '')
         
         if keyword == '':
             return jsonify({"Error": f"Not all parameters provided"}), 400
         
-        locations = get_locations(keyword=keyword)
+        locations = await get_locations(keyword=keyword)
         
         return jsonify(locations)
         
