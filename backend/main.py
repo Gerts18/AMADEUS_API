@@ -1,6 +1,8 @@
 from quart import Quart, request, jsonify
 from quart_cors import cors
 from amadeus_api import get_flights, get_locations
+from amadeus import ResponseError
+import json
 """
 This script sets up a Quart web server with two endpoints: /flights and /locations.
 The /flights endpoint retrieves flight information based on origin, destination, and departure date parameters.
@@ -25,8 +27,17 @@ async def flights() -> list:
         
         return jsonify(flights)
     
+    except ResponseError as error:
+
+        data_error = json.loads(error.response.body) if isinstance(error.response.body, str) else error.response.body
+        
+        return jsonify({"Error":f"{data_error["errors"][0]["title"]} {data_error["errors"][0]["detail"]}"}), error.response.status_code
+        
     except KeyError as error: 
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 500
+    
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error"}), 500
     
 @app.route("/locations", methods=['GET'])
 async def locations() -> dict:
@@ -39,9 +50,19 @@ async def locations() -> dict:
         locations = await get_locations(keyword=keyword)
         
         return jsonify(locations)
+    
+    except ResponseError as error:
+
+        data_error = json.loads(error.response.body) if isinstance(error.response.body, str) else error.response.body
+        
+        return jsonify({"Error":f"{data_error["errors"][0]["title"]} {data_error["errors"][0]["detail"]}"}), error.response.status_code
         
     except KeyError as error: 
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 500
+    
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error"}), 500
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
