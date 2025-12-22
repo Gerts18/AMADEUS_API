@@ -46,7 +46,7 @@ const SearchBar = ({type, selected}: SearchBarProps) => {
     }
 
     return (
-        <div className= "flex flex-col items-center w-full max-w-3xl mx-auto ">
+        <div className= "flex flex-col items-center w-full mx-auto ">
 
             <div className=" bg-white border-2 border-solid rounded-2xl p-1.5 w-full ">
                 <input 

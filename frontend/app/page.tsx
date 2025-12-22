@@ -1,5 +1,6 @@
 'use client'
 
+import DatePicker from "@/components/DatePicker";
 import FlightCard from "@/components/FlightCard";
 import SearchBar from "@/components/SearchBar";
 import { useState } from "react";
@@ -42,20 +43,21 @@ export default function Home() {
     }
   )
 
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: string, value: string ) => {
     setForm(
       {
         ...form,
         [name] : value
       }
     )
+    console.log(value)
   }
 
   return (
     <main>
 
       {/* Search engine for flights */}
-      <section>
+      <section className="flex flex-col gap-4 p-6 max-w-4xl mx-auto">
 
           <SearchBar 
             type = "origin"  
@@ -66,6 +68,12 @@ export default function Home() {
             type = "destination"  
             selected= {handleChange}
           />
+
+          <DatePicker
+            value={form.departure_date}
+            onChange={(date) => handleChange("departure_date", date)}
+          />
+
 
       </section>
 
