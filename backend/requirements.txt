@@ -3,3 +3,4 @@ python-dotenv
 quart
 quart-cors
 quart-schema
+pydantic

@@ -1,14 +1,12 @@
 from quart import Quart, request, jsonify
 from quart_cors import cors
 from quart_schema import QuartSchema, validate_querystring, validate_response
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 from amadeus_api import get_flights, get_locations
 from amadeus import ResponseError
 import json
 """
 This script sets up a Quart web server with two endpoints: /flights and /locations.
-The /flights endpoint retrieves flight information based on origin, destination, and departure date parameters.
-The /locations endpoint retrieves available flight locations based on a keyword parameter.
 """
 
 app = Quart(__name__)
@@ -16,34 +14,28 @@ app = cors(app,  allow_origin="*") #http://localhost:3000
 
 # Quart-Schema for documentation
 QuartSchema(
-    app,
-    title="Flight Search API",
-    version="1.0.0",
-    description="API para buscar vuelos y ubicaciones usando Amadeus API"
+    app
 )
 
 # Models for validation and documentation 
-@dataclass
-class FlightsQuery:
+class FlightsQuery(BaseModel):
     """Search Flight parameters"""
-    origin: str
-    destination: str
-    departure_date: str
+    origin: str = Field(..., description="IATA airport code for departure (e.g., BKK, MEX)")
+    destination: str = Field(..., description="IATA airport code for arrival (e.g., SFO, JFK)")
+    departure_date: str = Field(..., description="Departure date in YYYY-MM-DD format")
 
-@dataclass
-class LocationsQuery:
+class LocationsQuery(BaseModel):
     """Search Locations parameters"""
-    keyword: str
+    keyword: str = Field(..., description="Search term for location lookup (minimum 1 character)")
 
-@dataclass
-class ErrorResponse:
+class ErrorResponse(BaseModel):
     """Error response"""
     Error: str
 
 
 @app.route("/flights", methods=['GET'])
 @validate_querystring(FlightsQuery)
-async def flights(query_args: FlightsQuery) -> tuple:
+async def flights(query_args: FlightsQuery):
     """
     Search for available flights
     
@@ -83,7 +75,7 @@ async def flights(query_args: FlightsQuery) -> tuple:
     
 @app.route("/locations", methods=['GET'])
 @validate_querystring(LocationsQuery)
-async def locations(query_args: LocationsQuery) -> tuple:
+async def locations(query_args: LocationsQuery) :
     """
     Search for available locations
     
