@@ -34,7 +34,8 @@ def get_flights(origin = "SYD", destination= "BKK", departure_date = '2025-12-20
         return filtered_flights
         
     except ResponseError as error:
-        return (error.response.body)
+        data_error = json.loads(error.response.body) if isinstance(error.response.body, str) else error.response.body
+        return {"title": data_error["errors"][0]["title"],"details": data_error["errors"][0]["detail"]}
 
 
 # Parse the data of a flight
@@ -95,7 +96,8 @@ def get_locations(keyword = 'r'):
         return locations_list
         
     except ResponseError as error:
-        return (error.response.body)
+        data_error = json.loads(error.response.body) if isinstance(error.response.body, str) else error.response.body
+        return {"title": data_error["errors"][0]["title"],"details": data_error["errors"][0]["detail"]}
 
 # Parses the data from an array of locations
 def parse_locations(locations_data):
