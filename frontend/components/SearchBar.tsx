@@ -21,7 +21,7 @@ const SearchBar = ({type, selected}: SearchBarProps) => {
         try {
             const response = await axios.get(`${apiUrl}/locations?keyword=${value}`)
             setLocations(response.data) 
-            console.log(response.data)
+            /* console.log(response.data) */
         }catch (error){
             console.error(`Error getting data ${error}`)
         }

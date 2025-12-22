@@ -30,7 +30,6 @@ export default function Home() {
         [name] : value
       }
     )
-    console.log(value)
   }
 
   const fetchData = async () => {
@@ -39,7 +38,7 @@ export default function Home() {
             setLoading(true)
             const response = await axios.get(`${apiUrl}/flights?departure_date=${form.departure_date}&destination=${form.destination}&origin=${form.origin}`)
             setFlights(response.data)
-            console.log(response.data)
+            /* console.log(response.data) */
         }catch (error){
             console.error(`Error getting data ${error}`)
         } finally {
