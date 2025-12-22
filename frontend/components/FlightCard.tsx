@@ -1,19 +1,4 @@
-interface FlightData {
-    price: string;
-    id: string;
-    "0firstFlightDepartureAirport": string;
-    "0firstFlightAirline": string;
-    "0firstFlightNumber": string;
-    "0firstFlightArrivalAirport": string;
-    "0secondFlightDepartureAirport"?: string;
-    "0secondFlightAirline"?: string;
-    "0SecondFlightNumber"?: string;
-    "0secondFlightArrivalAirport"?: string;
-}
-
-interface FlightCardProps {
-    flight: FlightData;
-}
+import { FlightCardProps } from "../types/flight";
 
 const FlightCard = ({ flight }: FlightCardProps) => {
 

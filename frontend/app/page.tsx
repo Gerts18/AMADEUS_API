@@ -4,36 +4,16 @@ import DatePicker from "@/components/DatePicker";
 import FlightCard from "@/components/FlightCard";
 import SearchBar from "@/components/SearchBar";
 import { useState } from "react";
+import axios from "axios"
+
+import { FlightData } from "../types/flight";
 
 export default function Home() {
 
+  const apiUrl = process.env.NEXT_PUBLIC_BACK_URL || ""
 
-  const [flights, setFlights] = useState([
-    {
-      "price": "226.82",
-      "id": "1",
-      "0firstFlightDepartureAirport": "SYD",
-      "0firstFlightAirline": "OD",
-      "0firstFlightNumber": "172",
-      "0firstFlightArrivalAirport": "DPS",
-      "0secondFlightDepartureAirport": "DPS",
-      "0secondFlightAirline": "ID",
-      "0SecondFlightNumber": "7637",
-      "0secondFlightArrivalAirport": "DMK"
-    },
-    {
-      "price": "239.56",
-      "id": "2",
-      "0firstFlightDepartureAirport": "SYD",
-      "0firstFlightAirline": "VJ",
-      "0firstFlightNumber": "86",
-      "0firstFlightArrivalAirport": "SGN",
-      "0secondFlightDepartureAirport": "SGN",
-      "0secondFlightAirline": "VJ",
-      "0SecondFlightNumber": "801",
-      "0secondFlightArrivalAirport": "BKK"
-    }
-  ])
+  const [flights, setFlights] = useState<FlightData[]>([])
+  const [loading, setLoading] = useState(false)
 
   const [form, setForm] = useState(
     {
@@ -51,6 +31,28 @@ export default function Home() {
       }
     )
     console.log(value)
+  }
+
+  const fetchData = async () => {
+
+        try {
+            setLoading(true)
+            const response = await axios.get(`${apiUrl}/flights?departure_date=${form.departure_date}&destination=${form.destination}&origin=${form.origin}`)
+            setFlights(response.data)
+            console.log(response.data)
+        }catch (error){
+            console.error(`Error getting data ${error}`)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+  const handleSearch = () => {
+    if (form.origin && form.destination && form.departure_date) {
+      fetchData()
+    } else {
+      alert("Please fill all fields")
+    }
   }
 
   return (
@@ -74,14 +76,20 @@ export default function Home() {
             onChange={(date) => handleChange("departure_date", date)}
           />
 
+          <button 
+            onClick={handleSearch}
+            disabled={!form.origin || !form.destination || !form.departure_date || loading}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            {loading ? "Searching..." : "Search Flights"}
+          </button>
 
       </section>
 
       {/*  Map results of the flights  */}
       <section className="flex flex-col items-center gap-5">
 
-        {
-          flights.map((flight) => (
+        {!loading && flights.map((flight) => (
             <FlightCard 
               key={flight.id} 
               flight={flight} 

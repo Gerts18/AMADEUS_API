@@ -1,14 +1,7 @@
 import axios from "axios"
 import { useState } from "react"
 
-interface LocationsData{
-    [iataCode: string]: string;
-}
-
-interface SearchBarProps {
-    type: string;
-    selected: (name: string, value: string) => void 
-}
+import { SearchBarProps, LocationsData } from "../types/locations";
 
 const SearchBar = ({type, selected}: SearchBarProps) => {
 
@@ -26,9 +19,9 @@ const SearchBar = ({type, selected}: SearchBarProps) => {
             return;
         }
         try {
-            /* const response = await axios.get(`${apiUrl}/locations?keyword=${value}`)
-            setLocations(response.data) */
-            /* console.log(response.data) */
+            const response = await axios.get(`${apiUrl}/locations?keyword=${value}`)
+            setLocations(response.data) 
+            console.log(response.data)
         }catch (error){
             console.error(`Error getting data ${error}`)
         }
