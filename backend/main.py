@@ -6,11 +6,11 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route("/flights", methods=['GET'])
-def flights():
+def flights() -> []:
     try: 
-        origin = request.args.get('origin', '')
-        destination = request.args.get('destination', '')
-        departure_date = request.args.get('departure_date', '')
+        origin: str = request.args.get('origin', '')
+        destination: str = request.args.get('destination', '')
+        departure_date: str = request.args.get('departure_date', '')
         
         if origin == '' or destination == '' or departure_date == '':
             return jsonify({"Error": f"Not all parameters provided"}), 400
@@ -23,9 +23,9 @@ def flights():
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 500
     
 @app.route("/locations", methods=['GET'])
-def locations():
+def locations() -> {}:
     try:
-        keyword = request.args.get('keyword', '')
+        keyword: str = request.args.get('keyword', '')
         
         if keyword == '':
             return jsonify({"Error": f"Not all parameters provided"}), 400

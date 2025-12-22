@@ -14,8 +14,8 @@ amadeus = Client(
 )
 
 # Retrieve flights based on parameters send by the user
-def get_flights(origin = "BKK", destination= "SFO", departure_date = '2025-12-23'):
-    filtered_flights = []
+def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str = '2025-12-23') -> []:
+    filtered_flights:list = []
     
     parameters = {
         "originLocationCode": origin,
@@ -41,8 +41,8 @@ def get_flights(origin = "BKK", destination= "SFO", departure_date = '2025-12-23
 
 
 # Parse the data of a flight
-def parse_flight(flight_data):
-    flight = {}
+def parse_flight(flight_data: dict) -> {}:
+    flight: dict = {}
     
     flight['price'] = flight_data['price']['total']
     flight['id'] = flight_data['id']
@@ -66,8 +66,8 @@ def parse_flight(flight_data):
     return flight
 
 # Retrieve locations availables for flights  
-def get_locations(keyword = 'r'):
-    location_list = []
+def get_locations(keyword: str = 'r') -> {}:
+    location_list: list = []
     
     try:
         locations = amadeus.reference_data.locations.get(
@@ -84,8 +84,8 @@ def get_locations(keyword = 'r'):
         return {"title": data_error["errors"][0]["title"],"details": data_error["errors"][0]["detail"]}
 
 # Parses the data from an array of locations
-def parse_locations(locations_data):
-    locations_dict = {}
+def parse_locations(locations_data: list) -> {}:
+    locations_dict: dict = {}
     
     for location in locations_data:
         iata_code = location['iataCode']
