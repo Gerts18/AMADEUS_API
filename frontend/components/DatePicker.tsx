@@ -32,7 +32,7 @@ const DatePicker = ({ value, onChange }: DatePickerProps) => {
                 timeFormat={false}
                 isValidDate={isValidDate}
                 inputProps={{
-                    className: "appearance-none shadow bg-white border rounded-2xl w-full p-1.5 text-black leading-tight focus:outline-none focus:shadow-outline",
+                    className: "appearance-none shadow bg-white border-2 rounded-2xl w-full p-1.5 text-black leading-tight focus:outline-none focus:shadow-outline",
                     placeholder: "departure date"
                 }}
             />

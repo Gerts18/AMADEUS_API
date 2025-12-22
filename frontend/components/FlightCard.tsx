@@ -19,7 +19,7 @@ const FlightCard = ({ flight }: FlightCardProps) => {
                     {flight.itineraries.map((itinerary, itineraryIndex) => (
                         <div key={itineraryIndex} className="mb-4">
                             <p className="font-bold text-gray-800 mb-2">Itinerary {itineraryIndex + 1}</p>
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-row flex-wrap gap-3">
                                 {itinerary.segments.map((segment, segmentIndex) => (
                                     <div key={segmentIndex} className="text-gray-700 text-base border-l-2 border-blue-500 pl-3">
                                         <p className="font-semibold">Segment {segmentIndex + 1}:</p>

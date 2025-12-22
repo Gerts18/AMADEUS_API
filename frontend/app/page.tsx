@@ -56,7 +56,11 @@ export default function Home() {
   }
 
   return (
-    <main>
+    <>
+
+      <header className="flex flex-row justify-center text-lg font-semibold italic">
+        <h1>Amadeus Flight Search</h1>
+      </header>
 
       {/* Search engine for flights */}
       <section className="flex flex-col gap-4 p-6 max-w-4xl mx-auto">
@@ -99,6 +103,6 @@ export default function Home() {
 
       </section>
 
-    </main>
+    </>
   );
 }
