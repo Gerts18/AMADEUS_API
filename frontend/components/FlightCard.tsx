@@ -2,11 +2,9 @@ import { FlightCardProps } from "../types/flight";
 
 const FlightCard = ({ flight }: FlightCardProps) => {
 
-    const hasSecondFlight = flight["0secondFlightDepartureAirport"] && flight["0secondFlightArrivalAirport"];
-
     return (
-        <div className="max-w-sm min-w- w-full flex flex-col items-center">
-            <div className="border-2 border-gray-400 bg-white rounded-b p-4 flex flex-col justify-between leading-normal">
+        <div className="max-w-2xl w-full flex flex-col items-center">
+            <div className="border-2 border-gray-400 bg-white rounded-b p-4 flex flex-col justify-between leading-normal w-full">
                 <div className="mb-2">
 
                     <p className="text-sm text-gray-600 flex items-center">
@@ -18,27 +16,20 @@ const FlightCard = ({ flight }: FlightCardProps) => {
 
                     <div className="text-gray-900 font-bold text-xl mb-2">${flight.price}</div>
                     
-                    <div className="flex flex-row gap-4 min-w-100">
-
-                        {/* First Flight Segment */}
-                        <div className="text-gray-700 text-base mb-3 flex-1">
-                            <p className="font-semibold">Segment 1:</p>
-                            <p>{flight["0firstFlightDepartureAirport"]} → {flight["0firstFlightArrivalAirport"]}</p>
-                            <p className="text-sm">Airline: {flight["0firstFlightAirline"]} | Flight: {flight["0firstFlightNumber"]}</p>
-                        </div>
-
-                        {/* Second Flight Segment - Only if exists */}
-                        {hasSecondFlight && (
-                            <div className="text-gray-700 text-base flex-1">
-                                <p className="font-semibold">Segment 2:</p>
-                                <p>{flight["0secondFlightDepartureAirport"]} → {flight["0secondFlightArrivalAirport"]}</p>
-                                <p className="text-sm">Airline: {flight["0secondFlightAirline"]} | Flight: {flight["0SecondFlightNumber"]}</p>
+                    {flight.itineraries.map((itinerary, itineraryIndex) => (
+                        <div key={itineraryIndex} className="mb-4">
+                            <p className="font-bold text-gray-800 mb-2">Itinerary {itineraryIndex + 1}</p>
+                            <div className="flex flex-col gap-3">
+                                {itinerary.segments.map((segment, segmentIndex) => (
+                                    <div key={segmentIndex} className="text-gray-700 text-base border-l-2 border-blue-500 pl-3">
+                                        <p className="font-semibold">Segment {segmentIndex + 1}:</p>
+                                        <p>{segment.departureAirport} → {segment.arrivalAirport}</p>
+                                        <p className="text-sm">Airline: {segment.airline} | Flight: {segment.flightNumber}</p>
+                                    </div>
+                                ))}
                             </div>
-                        )}
-                    
-
-                    </div>
-
+                        </div>
+                    ))}
 
                 </div>
             </div>

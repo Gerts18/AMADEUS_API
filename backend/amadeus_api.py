@@ -14,7 +14,7 @@ amadeus = Client(
 )
 
 # Retrieve flights based on parameters send by the user
-def get_flights(origin = "SYD", destination= "BKK", departure_date = '2025-12-20'):
+def get_flights(origin = "BKK", destination= "SFO", departure_date = '2025-12-23'):
     filtered_flights = []
     
     parameters = {
@@ -27,6 +27,8 @@ def get_flights(origin = "SYD", destination= "BKK", departure_date = '2025-12-20
     try:
         search_flights = amadeus.shopping.flight_offers_search.get(**parameters)
         #print(json.dumps(search_flights.data[:3], indent= 4))
+        """ with open('flights_data.json', 'w', encoding='utf-8') as f:
+            json.dump(search_flights.data, f, indent=4, ensure_ascii=False) """
         
         for flight in search_flights.data:
             filtered_flights.append(parse_flight(flight))
@@ -41,43 +43,25 @@ def get_flights(origin = "SYD", destination= "BKK", departure_date = '2025-12-20
 # Parse the data of a flight
 def parse_flight(flight_data):
     flight = {}
-    index = 0
     
     flight['price'] = flight_data['price']['total']
     flight['id'] = flight_data['id']
+    flight['itineraries'] = []
     
-    for i in flight_data['itineraries']:
+    for itinerary in flight_data['itineraries']:
+        segments_list = []
         
-        if len(flight_data['itineraries'][index]['segments']) == 2: # both-ways
-            
-            flight[str(index) + "firstFlightDepartureAirport"] = flight_data['itineraries'][index]['segments'][0]['departure']['iataCode']
-            
-            flight[str(index) + 'firstFlightAirline'] = flight_data['itineraries'][index]['segments'][0]['carrierCode']
-            
-            flight[str(index) + 'firstFlightNumber'] = flight_data['itineraries'][index]['segments'][0]['number']
-            
-            flight[str(index) + 'firstFlightArrivalAirport'] = flight_data['itineraries'][index]['segments'][0]['arrival']['iataCode']
-            
-            flight[str(index) + 'secondFlightDepartureAirport'] = flight_data['itineraries'][index]['segments'][1]['departure']['iataCode']
-            
-            flight[str(index) + 'secondFlightAirline'] = flight_data['itineraries'][index]['segments'][1]['carrierCode']
-            
-            flight[str(index) + 'SecondFlightNumber'] = flight_data['itineraries'][index]['segments'][1]['number']
-            
-            flight[str(index) + 'secondFlightArrivalAirport'] = flight_data['itineraries'][index]['segments'][1]['arrival']['iataCode']
-            
-            
-            
-        elif len(flight_data['itineraries'][index]['segments']) == 1: # One-way
-            flight[str(index) + "firstFlightDepartureAirport"] = flight_data['itineraries'][index]['segments'][0]['departure']['iataCode']
-            
-            flight[str(index) + 'firstFlightAirline'] = flight_data['itineraries'][index]['segments'][0]['carrierCode']
-            
-            flight[str(index) + 'firstFlightNumber'] = flight_data['itineraries'][index]['segments'][0]['number']
-            
-            flight[str(index) + 'firstFlightArrivalAirport'] = flight_data['itineraries'][index]['segments'][0]['arrival']['iataCode']
+        for segment in itinerary['segments']:
+            segments_list.append({
+                'departureAirport': segment['departure']['iataCode'],
+                'arrivalAirport': segment['arrival']['iataCode'],
+                'airline': segment['carrierCode'],
+                'flightNumber': segment['number']
+            })
         
-        index +=1
+        flight['itineraries'].append({
+            'segments': segments_list
+        })
         
     return flight
 

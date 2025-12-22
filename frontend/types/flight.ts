@@ -1,14 +1,18 @@
+export interface Segment {
+    departureAirport: string;
+    arrivalAirport: string;
+    airline: string;
+    flightNumber: string;
+}
+
+export interface Itinerary {
+    segments: Segment[];
+}
+
 export interface FlightData {
     price: string;
     id: string;
-    "0firstFlightDepartureAirport": string;
-    "0firstFlightAirline": string;
-    "0firstFlightNumber": string;
-    "0firstFlightArrivalAirport": string;
-    "0secondFlightDepartureAirport"?: string;
-    "0secondFlightAirline"?: string;
-    "0SecondFlightNumber"?: string;
-    "0secondFlightArrivalAirport"?: string;
+    itineraries: Itinerary[];
 }
 
 export interface FlightCardProps {
