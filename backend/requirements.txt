@@ -2,3 +2,4 @@ amadeus
 python-dotenv
 quart
 quart-cors
+quart-schema

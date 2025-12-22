@@ -1,5 +1,7 @@
 from quart import Quart, request, jsonify
 from quart_cors import cors
+from quart_schema import QuartSchema, validate_querystring, validate_response
+from dataclasses import dataclass
 from amadeus_api import get_flights, get_locations
 from amadeus import ResponseError
 import json
@@ -12,20 +14,60 @@ The /locations endpoint retrieves available flight locations based on a keyword 
 app = Quart(__name__)
 app = cors(app,  allow_origin="*") #http://localhost:3000
 
+# Quart-Schema for documentation
+QuartSchema(
+    app,
+    title="Flight Search API",
+    version="1.0.0",
+    description="API para buscar vuelos y ubicaciones usando Amadeus API"
+)
+
+# Models for validation and documentation 
+@dataclass
+class FlightsQuery:
+    """Search Flight parameters"""
+    origin: str
+    destination: str
+    departure_date: str
+
+@dataclass
+class LocationsQuery:
+    """Search Locations parameters"""
+    keyword: str
+
+@dataclass
+class ErrorResponse:
+    """Error response"""
+    Error: str
+
 
 @app.route("/flights", methods=['GET'])
-async def flights() -> list:
+@validate_querystring(FlightsQuery)
+async def flights(query_args: FlightsQuery) -> tuple:
+    """
+    Search for available flights
+    
+    Searches flights from an origin to a specific destination
+    
+    Args:
+        origin: IATA code of origin airport (e.g: BKK, MEX)
+        destination: IATA code of destination airport (e.g: SFO, JFK)
+        departure_date: Departure date in YYYY-MM-DD format
+    
+    Returns:
+        List of available flights with their details
+    """
     try: 
-        origin: str = request.args.get('origin', '')
-        destination: str = request.args.get('destination', '')
-        departure_date: str = request.args.get('departure_date', '')
+        origin: str = query_args.origin
+        destination: str = query_args.destination
+        departure_date: str = query_args.departure_date
         
-        if origin == '' or destination == '' or departure_date == '':
-            return jsonify({"Error": f"Not all parameters provided"}), 400
+        if not origin or not destination or not departure_date:
+            return jsonify({"Error": "Not all parameters provided"}), 400
         
-        flights = await get_flights(origin=origin, destination=destination, departure_date=departure_date )
+        flights = await get_flights(origin=origin, destination=destination, departure_date=departure_date)
         
-        return jsonify(flights)
+        return jsonify(flights), 200
     
     except ResponseError as error:
 
@@ -40,16 +82,28 @@ async def flights() -> list:
         return jsonify({"error": "Internal Server Error"}), 500
     
 @app.route("/locations", methods=['GET'])
-async def locations() -> dict:
+@validate_querystring(LocationsQuery)
+async def locations(query_args: LocationsQuery) -> tuple:
+    """
+    Search for available locations
+    
+    Searches available airports and cities based on a keyword.
+    
+    Args:
+        keyword: Keyword to search locations (minimum 1 character)
+    
+    Returns:
+        Dictionary with IATA codes and location names
+    """
     try:
-        keyword: str = request.args.get('keyword', '')
+        keyword: str = query_args.keyword
         
-        if keyword == '':
-            return jsonify({"Error": f"Not all parameters provided"}), 400
+        if not keyword:
+            return jsonify({"Error": "Not all parameters provided"}), 400
         
         locations = await get_locations(keyword=keyword)
         
-        return jsonify(locations)
+        return jsonify(locations), 200
     
     except ResponseError as error:
 
