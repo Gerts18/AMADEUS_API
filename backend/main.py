@@ -20,13 +20,13 @@ QuartSchema(
 # Models for validation and documentation 
 class FlightsQuery(BaseModel):
     """Search Flight parameters"""
-    origin: str = Field(..., description="IATA airport code for departure (e.g., BKK, MEX)")
-    destination: str = Field(..., description="IATA airport code for arrival (e.g., SFO, JFK)")
-    departure_date: str = Field(..., description="Departure date in YYYY-MM-DD format")
+    origin: str = Field(None, description="IATA airport code for departure (e.g., BKK, MEX)")
+    destination: str = Field(None, description="IATA airport code for arrival (e.g., SFO, JFK)")
+    departure_date: str = Field(None, description="Departure date in YYYY-MM-DD format")
 
 class LocationsQuery(BaseModel):
     """Search Locations parameters"""
-    keyword: str = Field(..., description="Search term for location lookup (minimum 1 character)")
+    keyword: str = Field(None, description="Search term for location lookup (minimum 1 character)")
 
 class ErrorResponse(BaseModel):
     """Error response"""

@@ -14,6 +14,8 @@ export default function Home() {
 
   const [flights, setFlights] = useState<FlightData[]>([])
   const [loading, setLoading] = useState(false)
+  const [isResult, setIsResult] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
 
   const [form, setForm] = useState(
     {
@@ -38,9 +40,20 @@ export default function Home() {
             setLoading(true)
             const response = await axios.get(`${apiUrl}/flights?departure_date=${form.departure_date}&destination=${form.destination}&origin=${form.origin}`)
             setFlights(response.data)
+
             /* console.log(response.data) */
-        }catch (error){
+
+            if (response.data.length === 0) {
+              setIsResult(true)
+              setErrorMessage("No flights available with that data")
+            }else{
+              setIsResult(false)
+            }
+
+            /* console.log(response.data) */
+        }catch (error:any){
             console.error(`Error getting data ${error}`)
+            setErrorMessage(error["Error"])
         } finally {
             setLoading(false)
         }
@@ -98,6 +111,11 @@ export default function Home() {
               flight={flight} 
             />
           ))
+        }
+
+        {
+          isResult &&
+          <p className="font-bold italic text-2xl"> {errorMessage} </p>
         }
 
       </section>
