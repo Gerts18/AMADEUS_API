@@ -71,7 +71,7 @@ async def flights(query_args: FlightsQuery):
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 500
     
     except Exception as e:
-        return jsonify({"error": "Internal Server Error"}), 500
+        return jsonify({"Error": "Internal Server Error"}), 500
     
 @app.route("/locations", methods=['GET'])
 @validate_querystring(LocationsQuery)
@@ -107,8 +107,8 @@ async def locations(query_args: LocationsQuery) :
         return jsonify({"Error": f"Something went wrong with your request: {error}"}), 500
     
     except Exception as e:
-        return jsonify({"error": "Internal Server Error"}), 500
-    
+        return jsonify({"Error": "Internal Server Error"}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

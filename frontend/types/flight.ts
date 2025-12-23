@@ -12,6 +12,7 @@ export interface Itinerary {
 export interface FlightData {
     price: string;
     id: string;
+    currency: string;
     itineraries: Itinerary[];
 }
 

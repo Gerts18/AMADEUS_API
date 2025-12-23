@@ -52,8 +52,8 @@ export default function Home() {
 
             /* console.log(response.data) */
         }catch (error:any){
-            console.error(`Error getting data ${error}`)
-            setErrorMessage(error["Error"])
+            setIsResult(true)
+            setErrorMessage(error["response"]['data']['Error'])
         } finally {
             setLoading(false)
         }

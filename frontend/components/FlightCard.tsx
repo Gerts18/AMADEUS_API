@@ -14,7 +14,7 @@ const FlightCard = ({ flight }: FlightCardProps) => {
                         Flight Available
                     </p>
 
-                    <div className="text-gray-900 font-bold text-xl mb-2">${flight.price}</div>
+                    <div className="text-gray-900 font-bold text-xl mb-2">${flight.price}- ${flight.currency} </div>
                     
                     {flight.itineraries.map((itinerary, itineraryIndex) => (
                         <div key={itineraryIndex} className="mb-4">

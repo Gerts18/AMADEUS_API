@@ -14,7 +14,7 @@ amadeus = Client(
     client_secret=os.getenv('AMADEUS_CLIENT_SECRET'),
 )
 
-async def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str = '2025-12-23') -> list[dict]:
+async def get_flights(origin: str = "BKK", destination:str= "SFO", departure_date:str = '2025-12-24') -> list[dict]:
     """
     Retrieve available flight offers from Amadeus API based on search criteria.
     """
@@ -31,9 +31,9 @@ async def get_flights(origin: str = "BKK", destination:str= "SFO", departure_dat
     search_flights = await asyncio.to_thread(
         amadeus.shopping.flight_offers_search.get, 
         **parameters
-    )
+    )               
     
-    #print(json.dumps(search_flights.data[:3], indent= 4))
+    print(json.dumps(search_flights.data[:3], indent= 4))
     
     for flight in search_flights.data:
         filtered_flights.append(parse_flight(flight))
@@ -48,6 +48,7 @@ def parse_flight(flight_data: dict) -> dict:
     flight: dict = {}
     
     flight['price'] = flight_data['price']['total']
+    flight['currency'] = flight_data['price']['currency']
     flight['id'] = flight_data['id']
     flight['itineraries'] = []
     
@@ -73,7 +74,6 @@ async def get_locations(keyword: str = 'r') -> dict:
     """
     Search for airports and cities available for flight bookings using a keyword.
     """
-    location_list: list = []
     
     locations = await asyncio.to_thread(
             amadeus.reference_data.locations.get,
@@ -101,4 +101,4 @@ def parse_locations(locations_data: list) -> dict:
     
 
 if __name__ == "__main__":
-  print(asyncio.run(get_locations()))
+  print(asyncio.run(get_flights()))
